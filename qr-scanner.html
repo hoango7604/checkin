@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="./css/style-qrscanner.css">
+		<!-- Instascan -->
+		<script src="./js/instascan.min.js"></script>
+		<!-- WebRTC -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading">Quét mã QRCode</h2>
+
+			<div class="text-center">
+				<div class="col-12">
+					<video id="preview"></video>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
+		<!-- Service Worker Register -->
+		<script src="./main.js"></script>
+
+		<script>
+			const findByPhoneNumber = async (value) => {
+				const phoneNumber = value;
+				const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiQUNDRVNTIiwidXNlcklkIjoiNjQzMzU1ODM0MjEwMjE1NTI2NCIsInBlcm1pc3Npb25Sb2xlIjoiV0VMQ09NRVIiLCJpYXQiOjE1NTE0MzI1MjcsImV4cCI6MTU1MTQzNDMyNywiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.tnj-MkPUWD7Fx8UfVdoMnoB-7f2CI0vzXQinNIpvKZg';
+
+				const response = await fetch('http://localhost:3000/api/v1/events/111/guests/findByPhoneNumber', {
+					method: "POST",
+					body: JSON.stringify({
+						phoneNumber
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					}
+				});
+				console.log(response);
+
+				switch (response.status) {
+					case 200:
+						const guestInfo = await response.json();
+
+						let query = '';
+						for (let [key, value] of Object.entries(guestInfo)) {
+							query += `${key}=${value}&`
+						}
+						const queryString = query.substring(0, query.length - 1);
+
+						window.location.href = `./thongtin.html?${queryString}`;
+					break;
+					case 401:
+						alert('Lỗi: Đăng nhập thất bại');
+					break;
+					case 400:
+					case 412:
+						const error = await response.json();
+						alert(`Lỗi: ${ error.message }`);
+					break;
+					default:
+						alert(`Lỗi không xác định`);
+					break;
+				}
+			}
+
+			let scanner = new Instascan.Scanner({
+				continuous: true,
+				video: document.getElementById('preview')
+			});
+
+			scanner.addListener('scan', (content, image) => {
+				// alert('Content: ' + content);
+				findByPhoneNumber(content);
+			});
+
+			Instascan.Camera.getCameras()
+				.then(cameras => {
+					if (cameras.length > 0) {
+						scanner.start(cameras[0]);
+					} 
+					else {
+						console.error('No cameras found.');
+					}
+				})
+				.catch(err => {
+					console.log('Something happened. ', err);
+				});
+		</script>
+  	</body>
+</html>

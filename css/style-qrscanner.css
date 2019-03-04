@@ -1,0 +1,23 @@
+body {
+	background: url(../images/background.jpg) no-repeat center center fixed;
+	background-size: cover;
+}
+
+.heading {
+	text-align: center;
+	margin: 50px auto 50px;
+	font-size: 30px;
+	color: aliceblue;
+}
+
+video {
+	width: 80vw;
+	height: 50vw;
+	border: 1px solid aquamarine;
+	background-image: url(../images/camera.jpg);
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-origin: padding-box;
+	background-size: cover;
+}

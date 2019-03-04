@@ -1,0 +1,8 @@
+// {
+// 	"liveServer.settings.https": {
+// 		"enable": true, //set it true to enable the feature.
+// 		"cert": "C:\\https\\server.cert", //full path
+// 		"key": "C:\\https\\server.key", //full path
+// 		"passphrase": ""
+// 	}
+// }

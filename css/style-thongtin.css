@@ -1,0 +1,33 @@
+body {
+	background: url(../images/background.jpg) no-repeat center center fixed;
+	background-size: cover;
+}
+
+.heading {
+	text-align: center;
+	margin: 20px auto 25px;
+	font-size: 30px;
+	color: aliceblue;
+}
+
+.table.table-striped {
+	border-radius: 20px;
+	border-color: transparent;
+}
+
+.table-striped th {
+	border-color: transparent;
+	width: 50%;
+}
+
+.table-striped td {
+	border-color: transparent;
+	width: 50%;
+}
+
+.btn {
+	border-radius: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
+	color: darkslategray;
+}

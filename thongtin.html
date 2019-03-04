@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="./css/style-thongtin.css">
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading">Xin chào</h2>
+
+			<table class="table table-striped">
+				<tr>
+					<th>Tên nhóm</th>
+					<td id="group"></td>
+				</tr>
+
+				<tr>
+					<th>Họ và tên</th>
+					<td id="name"></td>
+				</tr>
+
+				<tr>
+					<th>Số điện thoại</th>
+					<td id="phone-number"></td>
+				</tr>
+
+				<tr>
+					<th>Email</th>
+					<td id="email"></td>
+				</tr>
+
+				<tr>
+					<th>Tên công ty</th>
+					<td id="company"></td>
+				</tr>
+
+				<tr>
+					<th>Địa chỉ công ty</th>
+					<td id="company-address"></td>
+				</tr>
+
+				<tr>
+					<th>Mã số thuế</th>
+					<td id="tax"></td>
+				</tr>
+			</table>
+
+			<div class="text-center">
+				<div class="col-12">
+					<button type="submit" class="btn btn-light" id="btn-complete">Hoàn tất</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
+		<!-- Service Worker Register -->
+		<script src="./main.js"></script>
+
+		<script>
+			function getParameterByName(name, url) {
+				if (!url) url = window.location.href;
+				name = name.replace(/[\[\]]/g, '\\$&');
+				var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+					results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			}
+			
+			const name = getParameterByName('guestFullname');
+			const phoneNumber = getParameterByName('guestPhoneNumber');
+			const email = getParameterByName('guestEmail');
+			const company = getParameterByName('guestCompany');
+
+			document.getElementById('name').innerHTML = name;
+			document.getElementById('phone-number').innerHTML = phoneNumber;
+			document.getElementById('email').innerHTML = email;
+			document.getElementById('company').innerHTML = company;
+		</script>
+  	</body>
+</html>
