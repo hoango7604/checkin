@@ -9,6 +9,17 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="./css/style-trangchu.css">
+		<!-- Check authentication -->
+		<script>
+			const checkAuthentication = () => {
+				if (!localStorage.getItem('accessToken') ||
+					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
+					window.location.href = './';
+				}
+			}
+			
+			checkAuthentication();
+		</script>
 
 		<title>App Check-in</title>
   	</head>
@@ -16,19 +27,17 @@
 		<div class="container">
 			<h2 class="heading">Chào mừng đến với chương trình</h2>
 
-			<form>
-				<div class="form-group">
-					<label for="phone-number">Vui lòng nhập số điện thoại:</label>
+			<div class="form-group">
+				<label for="phone-number">Vui lòng nhập số điện thoại:</label>
 
-					<input type="text" class="form-control" id="phone-number" placeholder="Số điện thoại...">
-				</div>
+				<input type="text" class="form-control" id="phone-number" placeholder="Số điện thoại...">
+			</div>
 
-				<div class="form-row text-center">
-					<div class="col-12">
-						<button type="submit" class="btn btn-light" onclick="findByPhoneNumber()">Hoàn tất</button>
-					</div>
+			<div class="form-row text-center">
+				<div class="col-12">
+					<button class="btn btn-light" onclick="findByPhoneNumber()">Hoàn tất</button>
 				</div>
-			</form>
+			</div>
 
 			<p class="text-center small">Hoặc</p>
 
@@ -53,7 +62,7 @@
 		<script>
 			const findByPhoneNumber = async () => {
 				const phoneNumber = document.getElementById('phone-number').value;
-				const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiQUNDRVNTIiwidXNlcklkIjoiNjQzMzU1ODM0MjEwMjE1NTI2NCIsInBlcm1pc3Npb25Sb2xlIjoiV0VMQ09NRVIiLCJpYXQiOjE1NTE0MzI1MjcsImV4cCI6MTU1MTQzNDMyNywiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.tnj-MkPUWD7Fx8UfVdoMnoB-7f2CI0vzXQinNIpvKZg';
+				const token = localStorage.getItem('accessToken');
 
 				const response = await fetch('http://localhost:3000/api/v1/events/111/guests/findByPhoneNumber', {
 					method: "POST",
@@ -65,7 +74,6 @@
 						'Authorization': `Bearer ${token}`
 					}
 				});
-				console.log(response);
 
 				switch (response.status) {
 					case 200:
@@ -75,6 +83,7 @@
 						for (let [key, value] of Object.entries(guestInfo)) {
 							query += `${key}=${value}&`
 						}
+						// Clear last '&' char in query string
 						const queryString = query.substring(0, query.length - 1);
 
 						window.location.href = `./thongtin.html?${queryString}`;

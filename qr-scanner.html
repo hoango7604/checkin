@@ -13,6 +13,17 @@
 		<script src="./js/instascan.min.js"></script>
 		<!-- WebRTC -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+		<!-- Check authentication -->
+		<script>
+			const checkAuthentication = () => {
+				if (!localStorage.getItem('accessToken') ||
+					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
+					window.location.href = './';
+				}
+			}
+
+			checkAuthentication();
+		</script>
 
 		<title>App Check-in</title>
   	</head>

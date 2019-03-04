@@ -9,6 +9,17 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="./css/style-thongtin.css">
+		<!-- Check authentication -->
+		<script>
+			const checkAuthentication = () => {
+				if (!localStorage.getItem('accessToken') ||
+					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
+					window.location.href = './';
+				}
+			}
+			
+			checkAuthentication();
+		</script>
 
 		<title>App Check-in</title>
   	</head>
@@ -70,7 +81,7 @@
 		<script src="./main.js"></script>
 
 		<script>
-			function getParameterByName(name, url) {
+			const getParameterByName = (name, url) => {
 				if (!url) url = window.location.href;
 				name = name.replace(/[\[\]]/g, '\\$&');
 				var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
