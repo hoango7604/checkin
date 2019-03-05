@@ -66,9 +66,7 @@
 						<video id="preview"></video>
 
 						<form>
-							<select class="custom-select" id="camera-select">
-								<option>aaa</option>
-							</select>
+							<select class="custom-select" id="camera-select" onchange="changeCamera()"></select>
 						</form>
 					</div>
 				</div>
@@ -86,9 +84,15 @@
 
 		<script>
 			var listCameras = [];
+			let select = document.getElementById('camera-select');
+
+			let scanner = new Instascan.Scanner({
+				continuous: true,
+				video: document.getElementById('preview')
+			});
 
 			const changeCamera = () => {
-				alert('AAA');
+				scanner.start(listCameras[select.selectedIndex]);
 			}
 
 			const findByPhoneNumber = async (value) => {
@@ -134,16 +138,9 @@
 				}
 			}
 
-			let scanner = new Instascan.Scanner({
-				continuous: true,
-				video: document.getElementById('preview')
-			});
-
 			scanner.addListener('scan', (content, image) => {
 				findByPhoneNumber(content);
 			});
-
-			let select = document.getElementById('camera-select');
 
 			Instascan.Camera.getCameras()
 				.then(cameras => {
