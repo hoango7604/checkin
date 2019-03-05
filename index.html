@@ -162,6 +162,8 @@
 						selectedIndex = cameras.length - 1;
 						select.value = cameras[selectedIndex].name;
 						scanner.start(cameras[selectedIndex]);
+
+						console.log(video.style.width);
 					} 
 					else {
 						console.error('No cameras found.');
