@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="./css/style-qrscanner.css">
+		<!-- Instascan -->
+		<script src="./js/instascan.min.js"></script>
+		<!-- WebRTC -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+		<!-- Check authentication -->
+		<script>
+			const refreshToken = async () => {
+				const accessToken = localStorage.getItem('accessToken');
+				const refreshAccessToken = localStorage.getItem('refreshAccessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/users/refresh-token', {
+					method: "POST",
+					body: JSON.stringify({
+						refreshAccessToken
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${accessToken}`
+					}
+				});
+
+				switch (response.status) {
+					case 200:
+						const token = await response.json();
+
+						// Save token to localStorage
+						localStorage.setItem('accessToken', token.accessToken);
+						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+					break;
+				}
+			}
+
+			const checkAuthentication = () => {
+				if (!localStorage.getItem('accessToken') ||
+					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
+					window.location.href = './';
+				}
+				else if (parseInt(localStorage.getItem('expireTime')) < new Date() + 15 * 60 * 1000) {
+					refreshToken();
+				}
+			}
+			
+			checkAuthentication();
+		</script>
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading">Quét mã QRCode</h2>
+
+			<div class="text-center">
+				<div class="col-12">
+					<div class="select-container">
+						<video id="preview"></video>
+
+						<form>
+							<select class="custom-select" id="camera-select"></select>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
+		<!-- Service Worker Register -->
+		<script src="./main.js"></script>
+
+		<script>
+			const findByPhoneNumber = async (value) => {
+				checkAuthentication();
+
+				const phoneNumber = value;
+				const token = localStorage.getItem('accessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/events/111/guests/findByPhoneNumber', {
+					method: "POST",
+					body: JSON.stringify({
+						phoneNumber
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					}
+				});
+				console.log(response);
+
+				switch (response.status) {
+					case 200:
+						const guestInfo = await response.json();
+
+						let query = '';
+						for (let [key, value] of Object.entries(guestInfo)) {
+							query += `${key}=${value}&`
+						}
+						const queryString = query.substring(0, query.length - 1);
+
+						window.location.href = `./thongtin.html?${queryString}`;
+					break;
+					case 401:
+						alert('Lỗi: Đăng nhập thất bại');
+					break;
+					case 400:
+					case 412:
+						const error = await response.json();
+						alert(`Lỗi: ${ error.message }`);
+					break;
+					default:
+						alert(`Lỗi không xác định`);
+					break;
+				}
+			}
+
+			let scanner = new Instascan.Scanner({
+				continuous: true,
+				video: document.getElementById('preview')
+			});
+
+			scanner.addListener('scan', (content, image) => {
+				findByPhoneNumber(content);
+			});
+
+			let listCameras = [];
+			let select = document.getElementById('camera-select');
+
+			Instascan.Camera.getCameras()
+				.then(cameras => {
+					if (cameras.length > 0) {
+						// Show list of cameras
+						listCameras = cameras;
+						for (let i = 0; i < listCameras.length; i++) {
+							var option = document.createElement('option');
+							option.text = listCameras[i].name;
+							select.add(option);
+						}
+
+						scanner.start(cameras[0]);
+					} 
+					else {
+						console.error('No cameras found.');
+					}
+				})
+				.catch(err => {
+					console.log('Something happened. ', err);
+				});
+		</script>
+  	</body>
+</html>
