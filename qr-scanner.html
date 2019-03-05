@@ -15,6 +15,32 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
 		<!-- Service Worker Register -->
 		<script src="./main.js"></script>
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading">Quét mã QRCode</h2>
+
+			<div class="text-center">
+				<div class="col-12">
+					<div class="select-container">
+						<video id="preview"></video>
+
+						<form>
+							<select class="custom-select" id="camera-select" onchange="changeCamera()"></select>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
 		<!-- Check authentication -->
 		<script>
 			const refreshToken = async () => {
@@ -55,32 +81,6 @@
 			
 			checkAuthentication();
 		</script>
-
-		<title>App Check-in</title>
-  	</head>
-	<body>
-		<div class="container">
-			<h2 class="heading">Quét mã QRCode</h2>
-
-			<div class="text-center">
-				<div class="col-12">
-					<div class="select-container">
-						<video id="preview"></video>
-
-						<form>
-							<select class="custom-select" id="camera-select" onchange="changeCamera()"></select>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
 
 		<script>
 			var listCameras = [];

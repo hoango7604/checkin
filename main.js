@@ -7,12 +7,4 @@ if ('serviceWorker' in navigator) {
 	});
 }
 
-const authenticate = () => {
-	if ( window.location.href != 'https://site.test/checkin/' &&
-		!window.localStorage.getItem('token')) {
-		console.log(window.location.href);
-		window.location.href = './';
-	}
-}
-
 const URL = 'http://localhost:3000/api/v1';

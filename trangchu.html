@@ -9,6 +9,42 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="./css/style-trangchu.css">
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading">Chào mừng đến với chương trình</h2>
+
+			<div class="form-group">
+				<label for="phone-number">Vui lòng nhập số điện thoại:</label>
+
+				<input type="text" class="form-control" id="phone-number" placeholder="Số điện thoại..." oninput="checkEnable()">
+			</div>
+
+			<div class="form-row text-center">
+				<div class="col-12">
+					<button class="btn btn-light" id="btn-complete" onclick="findByPhoneNumber()" disabled>Hoàn tất</button>
+				</div>
+			</div>
+
+			<p class="text-center small">Hoặc</p>
+
+			<p class="text-center">Quét mã QRCode</p>
+
+			<div class="text-center">
+				<div class="col-12">
+					<a class="btn btn-light" href="./qr-scanner.html">Quét mã QRCode</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
 		<!-- Service Worker Register -->
 		<script src="./main.js"></script>
 		<!-- Check authentication -->
@@ -51,42 +87,6 @@
 			
 			checkAuthentication();
 		</script>
-
-		<title>App Check-in</title>
-  	</head>
-	<body>
-		<div class="container">
-			<h2 class="heading">Chào mừng đến với chương trình</h2>
-
-			<div class="form-group">
-				<label for="phone-number">Vui lòng nhập số điện thoại:</label>
-
-				<input type="text" class="form-control" id="phone-number" placeholder="Số điện thoại..." onchange="checkEnable()">
-			</div>
-
-			<div class="form-row text-center">
-				<div class="col-12">
-					<button class="btn btn-light" id="btn-complete" onclick="findByPhoneNumber()" disabled>Hoàn tất</button>
-				</div>
-			</div>
-
-			<p class="text-center small">Hoặc</p>
-
-			<p class="text-center">Quét mã QRCode</p>
-
-			<div class="text-center">
-				<div class="col-12">
-					<a class="btn btn-light" href="./qr-scanner.html">Quét mã QRCode</a>
-				</div>
-			</div>
-		</div>
-
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
 
 		<script>
 			const checkEnable = () => {
