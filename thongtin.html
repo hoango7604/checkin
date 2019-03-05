@@ -9,13 +9,15 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="./css/style-thongtin.css">
+		<!-- Service Worker Register -->
+		<script src="./main.js"></script>
 		<!-- Check authentication -->
 		<script>
 			const refreshToken = async () => {
 				const accessToken = localStorage.getItem('accessToken');
 				const refreshAccessToken = localStorage.getItem('refreshAccessToken');
 
-				const response = await fetch('http://localhost:3000/api/v1/users/refresh-token', {
+				const response = await fetch(`${URL}/users/refresh-token`, {
 					method: "POST",
 					body: JSON.stringify({
 						refreshAccessToken
@@ -106,8 +108,6 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
-		<!-- Service Worker Register -->
-		<script src="./main.js"></script>
 
 		<script>
 			const getParameterByName = (name, url) => {

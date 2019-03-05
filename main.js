@@ -14,3 +14,5 @@ const authenticate = () => {
 		window.location.href = './';
 	}
 }
+
+const URL = 'http://localhost:3000/api/v1';

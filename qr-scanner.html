@@ -8,7 +8,11 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
-		<link rel="stylesheet" href="./css/style-trangchu.css">
+		<link rel="stylesheet" href="./css/style-qrscanner.css">
+		<!-- Instascan -->
+		<script src="./js/instascan.min.js"></script>
+		<!-- WebRTC -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
 		<!-- Service Worker Register -->
 		<script src="./main.js"></script>
 		<!-- Check authentication -->
@@ -56,27 +60,17 @@
   	</head>
 	<body>
 		<div class="container">
-			<h2 class="heading">Chào mừng đến với chương trình</h2>
-
-			<div class="form-group">
-				<label for="phone-number">Vui lòng nhập số điện thoại:</label>
-
-				<input type="text" class="form-control" id="phone-number" placeholder="Số điện thoại..." onchange="checkEnable()">
-			</div>
-
-			<div class="form-row text-center">
-				<div class="col-12">
-					<button class="btn btn-light" id="btn-complete" onclick="findByPhoneNumber()" disabled>Hoàn tất</button>
-				</div>
-			</div>
-
-			<p class="text-center small">Hoặc</p>
-
-			<p class="text-center">Quét mã QRCode</p>
+			<h2 class="heading">Quét mã QRCode</h2>
 
 			<div class="text-center">
 				<div class="col-12">
-					<a class="btn btn-light" href="./qr-scanner.html">Quét mã QRCode</a>
+					<div class="select-container">
+						<video id="preview"></video>
+
+						<form>
+							<select class="custom-select" id="camera-select" onchange="changeCamera()"></select>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -89,24 +83,24 @@
 		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
 
 		<script>
-			const checkEnable = () => {
-				const input = document.getElementById('phone-number');
-				const button = document.getElementById('btn-complete');
+			var listCameras = [];
+			let select = document.getElementById('camera-select');
+			let	video = document.getElementById('preview');
 
-				if (input.value !== "") {
-					button.disabled = false;
-				}
-				else {
-					button.disabled = true;
-				}
+			let scanner = new Instascan.Scanner({
+				continuous: true,
+				mirror: false,
+				video
+			});
+
+			const changeCamera = () => {
+				scanner.start(listCameras[select.selectedIndex]);
 			}
 
-			checkEnable();
-
-			const findByPhoneNumber = async () => {
+			const findByPhoneNumber = async (value) => {
 				checkAuthentication();
-				
-				const phoneNumber = document.getElementById('phone-number').value;
+
+				const phoneNumber = value;
 				const token = localStorage.getItem('accessToken');
 
 				const response = await fetch(`${URL}/events/111/guests/findByPhoneNumber`, {
@@ -128,7 +122,6 @@
 						for (let [key, value] of Object.entries(guestInfo)) {
 							query += `${key}=${value}&`
 						}
-						// Clear last '&' char in query string
 						const queryString = query.substring(0, query.length - 1);
 
 						window.location.href = `./thongtin.html?${queryString}`;
@@ -146,6 +139,35 @@
 					break;
 				}
 			}
+
+			scanner.addListener('scan', (content, image) => {
+				findByPhoneNumber(content);
+			});
+
+			Instascan.Camera.getCameras()
+				.then(cameras => {
+					if (cameras.length > 0) {
+						// Show list of cameras
+						listCameras = cameras;
+						for (let i = 0; i < listCameras.length; i++) {
+							var option = document.createElement('option');
+							option.text = listCameras[i].name;
+							select.add(option);
+						}
+
+						selectedIndex = cameras.length - 1;
+						select.value = cameras[selectedIndex].name;
+						scanner.start(cameras[selectedIndex]);
+					} 
+					else {
+						alert('Không có camera nào được chọn. Xin thử lại');
+						console.error('No cameras found.');
+					}
+				})
+				.catch(err => {
+					alert('Lỗi không xác định. Vui lòng thử lại');
+					console.log('Something happened. ', err);
+				});
 		</script>
   	</body>
 </html>
