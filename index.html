@@ -85,11 +85,12 @@
 		<script>
 			var listCameras = [];
 			let select = document.getElementById('camera-select');
+			let	video = document.getElementById('preview');
 
 			let scanner = new Instascan.Scanner({
 				continuous: true,
 				mirror: false,
-				video: document.getElementById('preview')
+				video
 			});
 
 			const changeCamera = () => {
@@ -157,6 +158,8 @@
 						selectedIndex = cameras.length - 1;
 						select.value = cameras[selectedIndex].name;
 						scanner.start(cameras[selectedIndex]);
+						video.style.background = null;
+						video.style.border = null;
 					} 
 					else {
 						console.error('No cameras found.');
