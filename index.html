@@ -8,39 +8,67 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<!-- Custom CSS -->
-		<link rel="stylesheet" href="./css/style-index.css">
+		<link rel="stylesheet" href="./css/style-qrscanner.css">
+		<!-- Instascan -->
+		<script src="./js/instascan.min.js"></script>
+		<!-- WebRTC -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
 		<!-- Check authentication -->
 		<script>
-			// Check if user has signed in
-			if (localStorage.getItem('accessToken') &&
-				parseInt(localStorage.getItem('expireTime')) >= new Date().getTime()) {
-				window.location.href = './trangchu.html';
+			const refreshToken = async () => {
+				const accessToken = localStorage.getItem('accessToken');
+				const refreshAccessToken = localStorage.getItem('refreshAccessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/users/refresh-token', {
+					method: "POST",
+					body: JSON.stringify({
+						refreshAccessToken
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${accessToken}`
+					}
+				});
+
+				switch (response.status) {
+					case 200:
+						const token = await response.json();
+
+						// Save token to localStorage
+						localStorage.setItem('accessToken', token.accessToken);
+						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+					break;
+				}
 			}
+
+			const checkAuthentication = () => {
+				if (!localStorage.getItem('accessToken') ||
+					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
+					window.location.href = './';
+				}
+				else if (parseInt(localStorage.getItem('expireTime')) < new Date() + 15 * 60 * 1000) {
+					refreshToken();
+				}
+			}
+			
+			// checkAuthentication();
 		</script>
 
 		<title>App Check-in</title>
   	</head>
 	<body>
 		<div class="container">
-			<h2 class="heading-2">Chào mừng đến với chương trình</h2>
+			<h2 class="heading">Quét mã QRCode</h2>
 
-			<h1 class="heading-1">Đăng nhập</h1>
-
-			<div class="form-group">
-				<label for="username">Tên đăng nhập:</label>
-
-				<input type="text" class="form-control" id="username" placeholder="Tên đăng nhập...">
-			</div>
-
-			<div class="form-group">
-				<label for="password">Mật khẩu:</label>
-
-				<input type="password" class="form-control" id="password" placeholder="Mật khẩu...">
-			</div>
-
-			<div class="form-row text-center">
+			<div class="text-center">
 				<div class="col-12">
-					<button class="btn btn-light" onclick="signIn()">Đăng nhập</button>
+					<div class="select-container">
+						<video id="preview"></video>
+
+						<form>
+							<select class="custom-select" id="camera-select"></select>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -55,42 +83,82 @@
 		<script src="./main.js"></script>
 
 		<script>
-			const signIn = async () => {
-				const username = document.getElementById('username').value;
-				const password = document.getElementById('password').value;
+			const findByPhoneNumber = async (value) => {
+				// checkAuthentication();
 
-				const response = await fetch('http://192.168.31.117:3000/api/v1/users/login', {
+				const phoneNumber = value;
+				const token = localStorage.getItem('accessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/events/111/guests/findByPhoneNumber', {
 					method: "POST",
 					body: JSON.stringify({
-						username,
-						password
+						phoneNumber
 					}),
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
 					}
 				});
+				console.log(response);
 
 				switch (response.status) {
 					case 200:
-						const userInfo = await response.json();
+						const guestInfo = await response.json();
 
-						// Save token to localStorage
-						localStorage.setItem('accessToken', userInfo.accessToken);
-						localStorage.setItem('refreshAccessToken', userInfo.refreshAccessToken);
-						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+						let query = '';
+						for (let [key, value] of Object.entries(guestInfo)) {
+							query += `${key}=${value}&`
+						}
+						const queryString = query.substring(0, query.length - 1);
 
-						// Navigate to main page
-						window.location.href = './trangchu.html';
+						window.location.href = `./thongtin.html?${queryString}`;
+					break;
+					case 401:
+						alert('Lỗi: Đăng nhập thất bại');
 					break;
 					case 400:
+					case 412:
 						const error = await response.json();
 						alert(`Lỗi: ${ error.message }`);
 					break;
 					default:
-						alert(`Lỗi: đăng nhập thất bại`);
+						alert(`Lỗi không xác định`);
 					break;
 				}
 			}
+
+			let scanner = new Instascan.Scanner({
+				continuous: true,
+				video: document.getElementById('preview')
+			});
+
+			scanner.addListener('scan', (content, image) => {
+				findByPhoneNumber(content);
+			});
+
+			let listCameras = [];
+			let select = document.getElementById('camera-select');
+
+			Instascan.Camera.getCameras()
+				.then(cameras => {
+					if (cameras.length > 0) {
+						// Show list of cameras
+						listCameras = cameras;
+						for (let i = 0; i < listCameras.length; i++) {
+							var option = document.createElement('option');
+							option.text = listCameras[i].name;
+							select.add(option);
+						}
+
+						scanner.start(cameras[0]);
+					} 
+					else {
+						console.error('No cameras found.');
+					}
+				})
+				.catch(err => {
+					console.log('Something happened. ', err);
+				});
 		</script>
   	</body>
 </html>
