@@ -54,6 +54,10 @@
 			// checkAuthentication();
 		</script>
 
+		<style>
+			
+		</style>
+
 		<title>App Check-in</title>
   	</head>
 	<body>
@@ -158,8 +162,6 @@
 						selectedIndex = cameras.length - 1;
 						select.value = cameras[selectedIndex].name;
 						scanner.start(cameras[selectedIndex]);
-						video.style.background = null;
-						video.style.border = null;
 					} 
 					else {
 						console.error('No cameras found.');

@@ -12,7 +12,7 @@ body {
 
 video {
 	width: inherit;
-	height: 50vw;
+	height: auto;
 	border: 1px solid aquamarine;
 	background-image: url(../images/camera.jpg);
 	background-repeat: no-repeat;
