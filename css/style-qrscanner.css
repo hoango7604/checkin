@@ -14,12 +14,6 @@ video {
 	width: inherit;
 	height: auto;
 	border: 1px solid aquamarine;
-	background-image: url(../images/camera.jpg);
-	background-repeat: no-repeat;
-	background-attachment: scroll;
-	background-position: center center;
-	background-origin: padding-box;
-	background-size: cover;
 	margin-bottom: 2px;
 }
 
