@@ -15,13 +15,42 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
 		<!-- Check authentication -->
 		<script>
+			const refreshToken = async () => {
+				const accessToken = localStorage.getItem('accessToken');
+				const refreshAccessToken = localStorage.getItem('refreshAccessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/users/refresh-token', {
+					method: "POST",
+					body: JSON.stringify({
+						refreshAccessToken
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${accessToken}`
+					}
+				});
+
+				switch (response.status) {
+					case 200:
+						const token = await response.json();
+
+						// Save token to localStorage
+						localStorage.setItem('accessToken', token.accessToken);
+						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+					break;
+				}
+			}
+
 			const checkAuthentication = () => {
 				if (!localStorage.getItem('accessToken') ||
 					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
 					window.location.href = './';
 				}
+				else if (parseInt(localStorage.getItem('expireTime')) < new Date() + 15 * 60 * 1000) {
+					refreshToken();
+				}
 			}
-
+			
 			checkAuthentication();
 		</script>
 
@@ -33,7 +62,13 @@
 
 			<div class="text-center">
 				<div class="col-12">
-					<video id="preview"></video>
+					<div class="select-container">
+						<video id="preview"></video>
+
+						<form>
+							<select class="custom-select" id="camera-select"></select>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -49,8 +84,10 @@
 
 		<script>
 			const findByPhoneNumber = async (value) => {
+				checkAuthentication();
+
 				const phoneNumber = value;
-				const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiQUNDRVNTIiwidXNlcklkIjoiNjQzMzU1ODM0MjEwMjE1NTI2NCIsInBlcm1pc3Npb25Sb2xlIjoiV0VMQ09NRVIiLCJpYXQiOjE1NTE0MzI1MjcsImV4cCI6MTU1MTQzNDMyNywiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.tnj-MkPUWD7Fx8UfVdoMnoB-7f2CI0vzXQinNIpvKZg';
+				const token = localStorage.getItem('accessToken');
 
 				const response = await fetch('http://localhost:3000/api/v1/events/111/guests/findByPhoneNumber', {
 					method: "POST",
@@ -96,13 +133,23 @@
 			});
 
 			scanner.addListener('scan', (content, image) => {
-				// alert('Content: ' + content);
 				findByPhoneNumber(content);
 			});
+
+			let listCameras = [];
+			let select = document.getElementById('camera-select');
 
 			Instascan.Camera.getCameras()
 				.then(cameras => {
 					if (cameras.length > 0) {
+						// Show list of cameras
+						listCameras = cameras;
+						for (let i = 0; i < listCameras.length; i++) {
+							var option = document.createElement('option');
+							option.text = listCameras[i].name;
+							select.add(option);
+						}
+
 						scanner.start(cameras[0]);
 					} 
 					else {

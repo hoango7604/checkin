@@ -11,7 +11,7 @@ body {
 }
 
 video {
-	width: 80vw;
+	width: inherit;
 	height: 50vw;
 	border: 1px solid aquamarine;
 	background-image: url(../images/camera.jpg);
@@ -20,4 +20,9 @@ video {
 	background-position: center center;
 	background-origin: padding-box;
 	background-size: cover;
+	margin-bottom: 2px;
+}
+
+.select-container {
+	width: 80vw;
 }

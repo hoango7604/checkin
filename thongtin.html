@@ -11,10 +11,39 @@
 		<link rel="stylesheet" href="./css/style-thongtin.css">
 		<!-- Check authentication -->
 		<script>
+			const refreshToken = async () => {
+				const accessToken = localStorage.getItem('accessToken');
+				const refreshAccessToken = localStorage.getItem('refreshAccessToken');
+
+				const response = await fetch('http://localhost:3000/api/v1/users/refresh-token', {
+					method: "POST",
+					body: JSON.stringify({
+						refreshAccessToken
+					}),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${accessToken}`
+					}
+				});
+
+				switch (response.status) {
+					case 200:
+						const token = await response.json();
+
+						// Save token to localStorage
+						localStorage.setItem('accessToken', token.accessToken);
+						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+					break;
+				}
+			}
+
 			const checkAuthentication = () => {
 				if (!localStorage.getItem('accessToken') ||
 					parseInt(localStorage.getItem('expireTime')) < new Date().getTime()) {
 					window.location.href = './';
+				}
+				else if (parseInt(localStorage.getItem('expireTime')) < new Date() + 15 * 60 * 1000) {
+					refreshToken();
 				}
 			}
 			
