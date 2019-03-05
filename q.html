@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="./css/style-index.css">
+		<!-- Check authentication -->
+		<script>
+			// Check if user has signed in
+			if (localStorage.getItem('accessToken') &&
+				parseInt(localStorage.getItem('expireTime')) >= new Date().getTime()) {
+				window.location.href = './trangchu.html';
+			}
+		</script>
+
+		<title>App Check-in</title>
+  	</head>
+	<body>
+		<div class="container">
+			<h2 class="heading-2">Chào mừng đến với chương trình</h2>
+
+			<h1 class="heading-1">Đăng nhập</h1>
+
+			<div class="form-group">
+				<label for="username">Tên đăng nhập:</label>
+
+				<input type="text" class="form-control" id="username" placeholder="Tên đăng nhập...">
+			</div>
+
+			<div class="form-group">
+				<label for="password">Mật khẩu:</label>
+
+				<input type="password" class="form-control" id="password" placeholder="Mật khẩu...">
+			</div>
+
+			<div class="form-row text-center">
+				<div class="col-12">
+					<button class="btn btn-light" onclick="signIn()">Đăng nhập</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"></script>
+		<!-- Service Worker Register -->
+		<script src="./main.js"></script>
+
+		<script>
+			const signIn = async () => {
+				const username = document.getElementById('username').value;
+				const password = document.getElementById('password').value;
+
+				const response = await fetch('http://192.168.31.117:3000/api/v1/users/login', {
+					method: "POST",
+					body: JSON.stringify({
+						username,
+						password
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+
+				switch (response.status) {
+					case 200:
+						const userInfo = await response.json();
+
+						// Save token to localStorage
+						localStorage.setItem('accessToken', userInfo.accessToken);
+						localStorage.setItem('refreshAccessToken', userInfo.refreshAccessToken);
+						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+
+						// Navigate to main page
+						window.location.href = './trangchu.html';
+					break;
+					case 400:
+						const error = await response.json();
+						alert(`Lỗi: ${ error.message }`);
+					break;
+					default:
+						alert(`Lỗi: đăng nhập thất bại`);
+					break;
+				}
+			}
+		</script>
+  	</body>
+</html>
