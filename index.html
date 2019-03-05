@@ -154,7 +154,9 @@
 							select.add(option);
 						}
 
-						scanner.start(cameras[0]);
+						selectedIndex = cameras.length - 1;
+						select.value = cameras[selectedIndex].name;
+						scanner.start(cameras[selectedIndex]);
 					} 
 					else {
 						console.error('No cameras found.');
