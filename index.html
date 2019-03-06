@@ -55,9 +55,26 @@
 		<script src="./main.js"></script>
 
 		<script>
+			let usernameInput = document.getElementById('username');
+			let passwordInput = document.getElementById('password');
+
+			usernameInput.addEventListener('keyup', event => {
+				// Key code 13 is enter key
+				if (event.keyCode == 13) {
+					passwordInput.focus();
+				}
+			});
+
+			passwordInput.addEventListener('keyup', event => {
+				// Key code 13 is enter key
+				if (event.keyCode == 13) {
+					signIn();
+				}
+			});
+
 			const signIn = async () => {
-				const username = document.getElementById('username').value;
-				const password = document.getElementById('password').value;
+				const username = usernameInput.value;
+				const password = passwordInput.value;
 
 				const response = await fetch(`${URL}/users/login`, {
 					method: "POST",

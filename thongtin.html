@@ -57,7 +57,7 @@
 
 			<div class="text-center">
 				<div class="col-12">
-					<button type="submit" class="btn btn-light" id="btn-complete">Hoàn tất</button>
+					<button class="btn btn-light" id="btn-complete">Hoàn tất</button>
 				</div>
 			</div>
 		</div>
@@ -110,6 +110,11 @@
 		</script>
 
 		<script>
+			const btnComplete = document.getElementById('btn-complete');
+			btnComplete.addEventListener('click', () => {
+				history.back();
+			});
+
 			const getParameterByName = (name, url) => {
 				if (!url) url = window.location.href;
 				name = name.replace(/[\[\]]/g, '\\$&');

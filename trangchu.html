@@ -89,10 +89,10 @@
 		</script>
 
 		<script>
-			const checkEnable = () => {
-				const input = document.getElementById('phone-number');
-				const button = document.getElementById('btn-complete');
+			const input = document.getElementById('phone-number');
+			const button = document.getElementById('btn-complete');
 
+			const checkEnable = () => {
 				if (input.value !== "") {
 					button.disabled = false;
 				}
@@ -102,6 +102,13 @@
 			}
 
 			checkEnable();
+
+			input.addEventListener('keyup', event => {
+				// Key code 13 is enter key
+				if (event.keyCode == 13) {
+					button.click();
+				}
+			});
 
 			const findByPhoneNumber = async () => {
 				checkAuthentication();
