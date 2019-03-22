@@ -115,8 +115,9 @@
 				
 				const phoneNumber = document.getElementById('phone-number').value;
 				const token = localStorage.getItem('accessToken');
+				const dependEventId = localStorage.getItem('dependEventId');
 
-				const response = await fetch(`${URL}/events/111/guests/findByPhoneNumber`, {
+				const response = await fetch(`${URL}/events/${dependEventId}/guests/findByPhoneNumber`, {
 					method: "POST",
 					body: JSON.stringify({
 						phoneNumber

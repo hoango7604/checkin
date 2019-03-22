@@ -95,6 +95,7 @@
 						localStorage.setItem('accessToken', userInfo.accessToken);
 						localStorage.setItem('refreshAccessToken', userInfo.refreshAccessToken);
 						localStorage.setItem('expireTime', new Date().getTime() + 2 * 60 * 60 * 1000);
+						localStorage.setItem('dependEventId', userInfo.dependEventId);
 
 						// Navigate to main page
 						window.location.href = './trangchu.html';
